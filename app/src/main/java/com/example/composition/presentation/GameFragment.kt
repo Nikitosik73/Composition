@@ -38,11 +38,11 @@ class GameFragment : Fragment() {
         binding.tvSum.setOnClickListener {
             launchGameFinishedFragment(
                 GameResult(
-                true,
-                0,
-                0,
-                GameSettings(0, 0, 0, 0)
-            )
+                    true,
+                    0,
+                    0,
+                    GameSettings(0, 0, 0, 0)
+                )
             )
         }
     }
@@ -60,7 +60,9 @@ class GameFragment : Fragment() {
     }
 
     private fun parseArgs() {
-        level = requireArguments().getSerializable(GAME_LEVEL) as Level
+        requireArguments().getParcelable<Level>(GAME_LEVEL)?.let {
+            level = it
+        }
     }
 
     companion object {
@@ -72,7 +74,7 @@ class GameFragment : Fragment() {
         fun newInstance(level: Level): GameFragment {
             return GameFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(GAME_LEVEL, level)
+                    putParcelable(GAME_LEVEL, level)
                 }
             }
         }
