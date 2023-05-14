@@ -42,6 +42,10 @@ class GameFinishedFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
+
+        binding.buttonRetry.setOnClickListener {
+            retryGame()
+        }
     }
 
     private fun retryGame() {
@@ -52,7 +56,9 @@ class GameFinishedFragment : Fragment() {
     }
 
     private fun parseArgs() {
-        gameResult = requireArguments().getSerializable(GAME_RESULT) as GameResult
+        requireArguments().getParcelable<GameResult>(GAME_RESULT)?.let {
+            gameResult = it
+        }
     }
 
     companion object {
@@ -65,7 +71,7 @@ class GameFinishedFragment : Fragment() {
             return GameFinishedFragment().apply {
                 arguments = Bundle().apply {
                     // test
-                    putSerializable(GAME_RESULT, gameResult)
+                    putParcelable(GAME_RESULT, gameResult)
                 }
             }
         }
