@@ -35,6 +35,56 @@ class GameFinishedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupOnClickListener()
+        bindViews()
+    }
+
+    private fun getSmileResId(): Int {
+        return if (gameResult.winner) {
+            R.drawable.ic_smile
+        } else {
+            R.drawable.ic_sad
+        }
+    }
+
+    private fun bindViews() {
+        with(binding) {
+
+            emojiResult.setImageResource(getSmileResId())
+
+            tvRequiredAnswers.text = String.format(
+                getString(R.string.required_score),
+                gameResult.gameSettings.minCountOfRightAnswers
+            )
+
+            tvScoreAnswers.text = String.format(
+                getString(R.string.score_answers),
+                gameResult.countOfQuestions
+            )
+
+
+            tvRequiredPercentage.text = String.format(
+                getString(R.string.required_percentage),
+                gameResult.gameSettings.minPercentOfRightAnswers
+            )
+
+            tvScorePercentage.text = String.format(
+                getString(R.string.score_percentage),
+                getPercentOfRightAnswer()
+            )
+        }
+    }
+
+    private fun getPercentOfRightAnswer() = with(gameResult) {
+        if (countOfQuestions == 0) {
+            0
+        } else {
+            ((countOfRightAnswers.toDouble() / countOfQuestions) * 100).toInt()
+        }
+    }
+
+    private fun setupOnClickListener() {
         // регагирование на нажатие кнопки назад
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -42,7 +92,6 @@ class GameFinishedFragment : Fragment() {
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
-
         binding.buttonRetry.setOnClickListener {
             retryGame()
         }
