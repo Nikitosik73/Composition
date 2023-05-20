@@ -12,9 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.composition.R
 import com.example.composition.databinding.FragmentGameBinding
 import com.example.composition.domain.entity.GameResult
-import com.example.composition.domain.entity.GameSettings
 import com.example.composition.domain.entity.Level
 import com.example.composition.presentation.viewmodel.GameViewModel
+import com.example.composition.presentation.viewmodelfactory.GameViewModelFactory
 
 class GameFragment : Fragment() {
 
@@ -23,11 +23,13 @@ class GameFragment : Fragment() {
         get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
 
     private lateinit var level: Level
+
+    private val viewModelFactory by lazy {
+        GameViewModelFactory(requireActivity().application, level)
+    }
+
     private val viewModel by lazy {
-        ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[GameViewModel::class.java]
+        ViewModelProvider(this, viewModelFactory)[GameViewModel::class.java]
     }
 
     private val textOptions by lazy {
@@ -59,7 +61,6 @@ class GameFragment : Fragment() {
 
         observeViewModel()
         setOnClickListenersToOptions()
-        viewModel.startGame(level)
     }
 
     override fun onDestroyView() {
