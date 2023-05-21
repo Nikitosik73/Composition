@@ -9,6 +9,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.composition.R
 import com.example.composition.databinding.FragmentGameBinding
 import com.example.composition.domain.entity.GameResult
@@ -22,10 +24,11 @@ class GameFragment : Fragment() {
     private val binding: FragmentGameBinding
         get() = _binding ?: throw RuntimeException("FragmentGameBinding == null")
 
-    private lateinit var level: Level
+    private val args by navArgs<GameFragmentArgs>() // второй способ получения аргументов
 
     private val viewModelFactory by lazy {
-        GameViewModelFactory(requireActivity().application, level)
+//        val args = GameFragmentArgs.fromBundle(requireArguments()) // первый способ получения аргументов
+        GameViewModelFactory(requireActivity().application, args.level)
     }
 
     private val viewModel by lazy {
@@ -41,11 +44,6 @@ class GameFragment : Fragment() {
             add(binding.tvOption5)
             add(binding.tvOption6)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        parseArgs()
     }
 
     override fun onCreateView(
@@ -128,30 +126,8 @@ class GameFragment : Fragment() {
     }
 
     private fun launchGameFinishedFragment(gameResult: GameResult) {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, GameFinishedFragment.newInstance(gameResult))
-            .addToBackStack(null)
-            .commit()
-    }
-
-    private fun parseArgs() {
-        requireArguments().getParcelable<Level>(GAME_LEVEL)?.let {
-            level = it
-        }
-    }
-
-    companion object {
-
-        const val NAME = "GameFragment"
-
-        private const val GAME_LEVEL = "level"
-
-        fun newInstance(level: Level): GameFragment {
-            return GameFragment().apply {
-                arguments = Bundle().apply {
-                    putParcelable(GAME_LEVEL, level)
-                }
-            }
-        }
+        findNavController().navigate(
+            GameFragmentDirections.actionGameFragment2ToGameFinishedFragment(gameResult)
+        )
     }
 }
