@@ -5,24 +5,23 @@ import android.os.CountDownTimer
 import androidx.lifecycle.*
 import com.example.composition.R
 import com.example.composition.data.GameRepositoryImpl
+import com.example.composition.di.annotation.TypeLevel
 import com.example.composition.domain.entity.GameResult
 import com.example.composition.domain.entity.GameSettings
 import com.example.composition.domain.entity.Level
 import com.example.composition.domain.entity.Question
 import com.example.composition.domain.usecase.GenerateQuestionUseCase
 import com.example.composition.domain.usecase.GetGameSettingsUseCase
+import javax.inject.Inject
 
-class GameViewModel(
+class GameViewModel @Inject constructor(
     private val application: Application,
-    private val level: Level
+    @TypeLevel private val level: Level,
+    private val generateQuestionUseCase: GenerateQuestionUseCase,
+    private val getGameSettingsUseCase: GetGameSettingsUseCase
 ) : ViewModel() {
 
     private lateinit var gameSettings: GameSettings
-
-    private val repository = GameRepositoryImpl
-
-    private val generateQuestionUseCase = GenerateQuestionUseCase(repository)
-    private val getGameSettingsUseCase = GetGameSettingsUseCase(repository)
 
     private var timer: CountDownTimer? = null
 
